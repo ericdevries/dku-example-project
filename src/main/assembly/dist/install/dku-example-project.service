@@ -1,0 +1,13 @@
+[Unit]
+Description=Dku Example Project Service
+
+[Service]
+ExecStart=/opt/dans.knaw.nl/dku-example-project/bin/dku-example-project server /etc/opt/dans.knaw.nl/dku-example-project/config.yml
+# Java returns 143 even if the SIGTERM was handled correctly.
+SuccessExitStatus=143
+
+User=dku-example-project
+Group=dku-example-project
+
+[Install]
+WantedBy=multi-user.target
