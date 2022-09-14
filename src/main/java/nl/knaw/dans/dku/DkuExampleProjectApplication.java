@@ -16,11 +16,28 @@
 
 package nl.knaw.dans.dku;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
 import io.dropwizard.Application;
+import io.dropwizard.db.PooledDataSourceFactory;
+import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.views.ViewBundle;
+import nl.knaw.dans.dku.db.TodoItem;
+import nl.knaw.dans.dku.db.TodoItemDao;
+import nl.knaw.dans.dku.resource.GetFileContentsResource;
+import nl.knaw.dans.dku.resource.OverdueTodosResource;
+import nl.knaw.dans.dku.resource.TodoApiImpl;
 
 public class DkuExampleProjectApplication extends Application<DkuExampleProjectConfiguration> {
+
+    private final HibernateBundle<DkuExampleProjectConfiguration> hibernateBundle = new HibernateBundle<>(TodoItem.class) {
+
+        @Override
+        public PooledDataSourceFactory getDataSourceFactory(DkuExampleProjectConfiguration configuration) {
+            return configuration.getDataSourceFactory();
+        }
+    };
 
     public static void main(final String[] args) throws Exception {
         new DkuExampleProjectApplication().run(args);
@@ -33,12 +50,23 @@ public class DkuExampleProjectApplication extends Application<DkuExampleProjectC
 
     @Override
     public void initialize(final Bootstrap<DkuExampleProjectConfiguration> bootstrap) {
-        // TODO: application initialization
+        bootstrap.addBundle(hibernateBundle);
+        bootstrap.getObjectMapper().disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        bootstrap.addBundle(new ViewBundle<>());
     }
 
     @Override
     public void run(final DkuExampleProjectConfiguration configuration, final Environment environment) {
+        // here we create our dependencies and inject them into the other dependencies if required
+        var todoItemDao = new TodoItemDao(hibernateBundle.getSessionFactory());
+        var todoApi = new TodoApiImpl(todoItemDao);
 
+        var overdueTodoResource = new OverdueTodosResource(todoItemDao);
+
+        environment.jersey().register(todoApi);
+        environment.jersey().register(overdueTodoResource);
+        // you can also directly instantiate the object, whatever you prefer
+        environment.jersey().register(new GetFileContentsResource());
     }
 
 }
