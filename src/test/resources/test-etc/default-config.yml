@@ -15,7 +15,7 @@ database:
   driverClass: org.h2.Driver
   user: root
   password: root
-  url: jdbc:h2:~/todo-app
+  url: jdbc:h2:mem:todo-app;DB_CLOSE_DELAY=-1
   properties:
     charSet: UTF-8
     hibernate.dialect: org.hibernate.dialect.H2Dialect
