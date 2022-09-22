@@ -39,6 +39,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertLinesMatch;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 // We need this annotation so that dropwizard sprinkles some magic on our code
@@ -100,7 +101,7 @@ class TodoApiImplTest {
             .get(List.class);
 
         assertEquals(3, response.size());
-        assertSame(null, ((HashMap)response.get(1)).get("attachment"));
-        assertSame(new File("my/todo/1.txt").getAbsoluteFile().toString(), ((HashMap)response.get(0)).get("attachment").toString());
+        assertNull(((HashMap) response.get(1)).get("attachment"));
+        assertEquals(new File("my/todo/1.txt").getAbsoluteFile().toString(), ((HashMap) response.get(0)).get("attachment").toString());
     }
 }
