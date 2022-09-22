@@ -44,13 +44,15 @@ public class TodoApiImpl implements TodoApi {
         var todoItem = new TodoItem();
         todoItem.setDueDate(todoDto.getDueDate());
         todoItem.setTitle(todoDto.getTitle());
+        todoItem.setAttachment(todoDto.getAttachment());
 
         var result = todoItemDao.createTodoItem(todoItem);
 
         return new TodoDto()
             .id(result.getId())
             .title(result.getTitle())
-            .dueDate(result.getDueDate());
+            .dueDate(result.getDueDate())
+            .attachment(result.getAttachment());
     }
 
     @Override
@@ -75,6 +77,7 @@ public class TodoApiImpl implements TodoApi {
                 .id(todo.getId())
                 .title(todo.getTitle())
                 .dueDate(todo.getDueDate())
+                .attachment(todo.getAttachment())
             )
             .collect(Collectors.toList());
     }
@@ -87,7 +90,8 @@ public class TodoApiImpl implements TodoApi {
             .map(todo -> new TodoDto()
                 .id(todo.getId())
                 .title(todo.getTitle())
-                .dueDate(todo.getDueDate()))
+                .dueDate(todo.getDueDate())
+                .attachment(todo.getAttachment()))
             .orElseThrow(() -> new NotFoundException(String.format("TODO with id %s not found", id)));
     }
 

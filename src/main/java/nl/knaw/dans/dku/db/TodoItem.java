@@ -20,6 +20,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.File;
 import java.time.OffsetDateTime;
 
 @Entity
@@ -31,13 +32,13 @@ public class TodoItem {
     private long id;
     private String title;
     private OffsetDateTime dueDate;
-    private String attachment;
+    private File attachment;
 
-    public String getAttachment() {
+    public File getAttachment() {
         return attachment;
     }
 
-    public void setAttachment(String attachment) {
+    public void setAttachment(File attachment) {
         this.attachment = attachment;
     }
 
