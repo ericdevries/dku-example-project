@@ -21,10 +21,12 @@ import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import nl.knaw.dans.dku.DkuExampleProjectApplication;
 import nl.knaw.dans.dku.DkuExampleProjectConfiguration;
 import nl.knaw.dans.dku.api.TodoDto;
+import nl.knaw.dans.dku.db.TodoItem;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
@@ -98,10 +100,10 @@ class TodoApiImplTest {
         var response = EXT.client().target(
                 String.format("http://localhost:%d/todo", EXT.getLocalPort()))
             .request()
-            .get(List.class);
+            .get(new GenericType<List<TodoDto>>(){});
 
         assertEquals(3, response.size());
-        assertNull(((HashMap) response.get(1)).get("attachment"));
-        assertEquals(new File("my/todo/1.txt").getAbsoluteFile().toString(), ((HashMap) response.get(0)).get("attachment").toString());
+        assertNull( response.get(1).getAttachment());
+        assertEquals(new File("my/todo/1.txt").getAbsoluteFile().toString(), (response.get(0)).getAttachment().toString());
     }
 }
