@@ -21,28 +21,18 @@ import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import nl.knaw.dans.dku.DkuExampleProjectApplication;
 import nl.knaw.dans.dku.DkuExampleProjectConfiguration;
 import nl.knaw.dans.dku.api.TodoDto;
-import nl.knaw.dans.dku.db.TodoItem;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.Response;
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 // We need this annotation so that dropwizard sprinkles some magic on our code
 @ExtendWith(DropwizardExtensionsSupport.class)
