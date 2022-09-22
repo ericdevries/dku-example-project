@@ -30,21 +30,7 @@ import java.io.IOException;
 public class GetFileContentsResource {
 
     @GET
-    public Response getFileContents(@NotEmpty @QueryParam("filename") String filename) {
-        try {
-            var resource = getClass().getClassLoader().getResource(filename);
-
-            if (resource == null) {
-                throw new FileNotFoundException("File not found");
-            }
-
-            return Response.ok(resource.openStream()).build();
-        }
-        catch (FileNotFoundException e) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        catch (IOException e) {
-            return Response.serverError().entity("Error: " + e.getMessage()).build();
-        }
+    public Response getFileContents(@NotEmpty @QueryParam("filename") String name) {
+            return Response.ok("Hello "+name).build();
     }
 }

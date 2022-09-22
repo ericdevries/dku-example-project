@@ -15,16 +15,43 @@
  */
 package nl.knaw.dans.dku.resource;
 
+import io.dropwizard.testing.ResourceHelpers;
+import io.dropwizard.testing.junit5.DropwizardAppExtension;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import nl.knaw.dans.dku.DkuExampleProjectApplication;
+import nl.knaw.dans.dku.DkuExampleProjectConfiguration;
+import nl.knaw.dans.dku.api.TodoDto;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import javax.ws.rs.client.Entity;
+import java.time.OffsetDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 // TODO finish this
+@ExtendWith(DropwizardExtensionsSupport.class)
 class GetFileContentsResourceTest {
+
+    private static DropwizardAppExtension<DkuExampleProjectConfiguration> EXT = new DropwizardAppExtension<>(
+        DkuExampleProjectApplication.class,
+        ResourceHelpers.resourceFilePath("test-etc/default-config.yml")
+    );
 
     @Test
     void getFileContents() {
-//        assertEquals(2, 2);
+        var response = EXT.client()
+            .target(
+                String.format("http://localhost:%d", EXT.getLocalPort()))
+            .path("file")
+            .queryParam("filename", "someone")
+            .request()
+            .get();
+
+        assertEquals(200, response.getStatus());
+        assertEquals("Hello someone", response.readEntity(String.class));
+
+        //        assertEquals(2, 2);
     }
 
 }

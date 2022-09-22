@@ -26,15 +26,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertLinesMatch;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 // We need this annotation so that dropwizard sprinkles some magic on our code
 @ExtendWith(DropwizardExtensionsSupport.class)
@@ -49,7 +54,8 @@ class TodoApiImplTest {
     void testCreateTodo() {
         var payload = new TodoDto()
             .title("Title goes here")
-            .dueDate(OffsetDateTime.now());
+            .dueDate(OffsetDateTime.now())
+            .attachment(new File("my/todo/one.txt"));
 
         // Because the application is actually running, we have to use http to test it
         // and get the randomly generated port from the DropwizardAppExtension.
@@ -64,23 +70,25 @@ class TodoApiImplTest {
 
         var dto = response.readEntity(TodoDto.class);
         assertEquals("Title goes here", dto.getTitle());
+        assertEquals(new File("my/todo/one.txt").getAbsoluteFile(), dto.getAttachment());
     }
 
     @Test
     void testListTodos() {
         var payloads = new TodoDto[] {
-            new TodoDto().title("Title 1 goes here").dueDate(OffsetDateTime.now().plus(15, ChronoUnit.DAYS)),
+            new TodoDto().title("Title 1 goes here").dueDate(OffsetDateTime.now().plus(15, ChronoUnit.DAYS)).attachment(new File("my/todo/1.txt")),
             new TodoDto().title("Title 2 goes here").dueDate(OffsetDateTime.now().plus(10, ChronoUnit.DAYS)),
-            new TodoDto().title("Title 3 goes here").dueDate(OffsetDateTime.now().plus(23, ChronoUnit.DAYS))
+            new TodoDto().title("Title 3 goes here").dueDate(OffsetDateTime.now().plus(23, ChronoUnit.DAYS)).attachment(new File("my/todo/3.txt"))
         };
 
         // First we create 3 items using the previously tested createTodo function
         for (var payload : payloads) {
+            Entity<TodoDto> json = Entity.json(payload);
             try (var r = EXT.client()
                 .target(
                     String.format("http://localhost:%d/todo", EXT.getLocalPort()))
                 .request()
-                .post(Entity.json(payload))) {
+                .post(json)) {
                 // no-op
             }
         }
@@ -92,5 +100,7 @@ class TodoApiImplTest {
             .get(List.class);
 
         assertEquals(3, response.size());
+        assertSame(null, ((HashMap)response.get(1)).get("attachment"));
+        assertSame("my/todo/1.txt", ((HashMap)response.get(0)).get("attachment"));
     }
 }

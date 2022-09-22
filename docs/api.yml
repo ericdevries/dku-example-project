@@ -134,6 +134,9 @@ components:
         dueDate:
           type: string
           format: date-time
+        attachment:
+          type: string
+          format: file
       required:
         - title
 
