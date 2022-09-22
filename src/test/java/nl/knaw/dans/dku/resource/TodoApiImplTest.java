@@ -101,6 +101,6 @@ class TodoApiImplTest {
 
         assertEquals(3, response.size());
         assertSame(null, ((HashMap)response.get(1)).get("attachment"));
-        assertSame("my/todo/1.txt", ((HashMap)response.get(0)).get("attachment"));
+        assertSame(new File("my/todo/1.txt").getAbsoluteFile().toString(), ((HashMap)response.get(0)).get("attachment").toString());
     }
 }

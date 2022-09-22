@@ -77,6 +77,7 @@ public class TodoApiImpl implements TodoApi {
                 .id(todo.getId())
                 .title(todo.getTitle())
                 .dueDate(todo.getDueDate())
+                .attachment(todo.getAttachment())
             )
             .collect(Collectors.toList());
     }
